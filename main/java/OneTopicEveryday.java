@@ -1,3 +1,8 @@
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
+
 public class OneTopicEveryday {
 
 
@@ -62,4 +67,113 @@ public class OneTopicEveryday {
         l.next = k;
         return start;
     }
+
+    /**
+     * 1603. 设计停车系统
+     */
+    class ParkingSystem {
+        int big;
+        int medium;
+        int small;
+        int[] arr;
+        public ParkingSystem(int big, int medium, int small) {
+            this.big = big;
+            this.medium = medium;
+            this.small = small;
+            this.arr = new int[3];
+        }
+
+        public boolean addCar(int carType) {
+            int value;
+            switch (carType){
+                case 1:
+                    value = big;
+                    break;
+                case 2:
+                    value = medium;
+                    break;
+                case 3:
+                    value = small;
+                    break;
+                default:
+                    value = 0;
+            }
+            if(arr[carType-1]<value){
+                arr[carType-1]++;
+                return true;
+            }else {
+                return false;
+            }
+        }
+    }
+
+
+    /**
+     * 456. 132模式
+     * 给你一个整数数组 nums ，数组中共有 n 个整数。132 模式的子序列 由三个整数 nums[i]、nums[j] 和 nums[k] 组成，并同时满足：i < j < k 和 nums[i] < nums[k] < nums[j]
+     */
+    public boolean find132pattern(int[] nums) {
+        Stack<Integer> stack = new Stack<>();
+        int k = Integer.MIN_VALUE;
+        stack.push(nums[nums.length-1]);
+        for(int i=nums.length-2;i>0;i--){
+            if (nums[i] < k){
+                return true;
+            }
+            while(!stack.isEmpty()&&nums[i]>stack.peek()){
+                k = Math.max(k,stack.pop());
+            }
+                stack.push(nums[i]);
+        }
+        return false;
+    }
+
+    /**
+     * 82. 删除排序链表中的重复元素 II
+     * 存在一个按升序排列的链表，给你这个链表的头节点 head ，请你删除链表中所有存在数字重复情况的节点，只保留原始链表中 没有重复出现 的数字。
+     */
+    public ListNode deleteDuplicates(ListNode head) {
+        int tmp = Integer.MIN_VALUE;
+        ListNode res = new ListNode(Integer.MAX_VALUE,head);
+        ListNode result = res;
+        while(head!=null){
+            if(head.next==null&&head.val>tmp){
+                res.next = head;
+                break;
+            }
+            if(head.next!=null&&head.next.val>head.val&&head.val!=tmp){
+                res.next = head;
+                res = res.next;
+            }else {
+                res.next = null;
+            }
+            tmp = head.val;
+            head = head.next;
+        }
+        return result.next;
+    }
+
+    /**
+     * 83. 删除排序链表中的重复元素
+     * 存在一个按升序排列的链表，给你这个链表的头节点 head ，请你删除所有重复的元素，使每个元素 只出现一次 。
+     * 返回同样按升序排列的结果链表。
+     */
+
+    public ListNode deleteDuplicates1(ListNode head) {
+        ListNode tmp = new ListNode(Integer.MAX_VALUE,head);
+        ListNode res = tmp;
+        Integer last = Integer.MIN_VALUE;
+        while(head!=null){
+            if(head.val>last){
+                tmp.next = head;
+                tmp=tmp.next;
+            }
+            last = head.val;
+            head=head.next;
+            tmp.next=null;
+        }
+        return res.next;
+    }
+
+
 }

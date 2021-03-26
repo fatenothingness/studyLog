@@ -1,10 +1,14 @@
+import com.alibaba.fastjson.JSONObject;
+
+import java.util.Map;
+
 public class Test {
 
 
     public static void main(String args[]){
         OneTopicEveryday oneTopicEveryday = new OneTopicEveryday();
-        ListNode head = new ListNode(1,new ListNode(2,new ListNode(3,new ListNode(4,new ListNode(5,null)))));
-        ListNode i = oneTopicEveryday.reverseBetween(head,5,5);
-        System.out.println(i);
+        ListNode head = new ListNode(1,new ListNode(1,new ListNode(1,new ListNode(5,new ListNode(5,null)))));
+        ListNode a = oneTopicEveryday.deleteDuplicates1(head);
+        System.out.println(a);
     }
 }

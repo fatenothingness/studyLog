@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.vivo.it.base</groupId>
+        <artifactId>base-pom</artifactId>
+        <version>1.1.9</version>
+    </parent>
+    <groupId>com.vivo.it.vwork</groupId>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>vworkcommon</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0</version>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <vivo-component.version>1.1.6</vivo-component.version>
+        <vivo-plus.version>1.4.4</vivo-plus.version>
+        <vivo.version>1.0.5</vivo.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.vivo.it.base</groupId>
+            <artifactId>vivo-boot-plus</artifactId>
+            <version>${vivo-plus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vivo.it.base</groupId>
+            <artifactId>vivo-boot-seata</artifactId>
+            <version>${vivo.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vivo.it.base</groupId>
+            <artifactId>vivo-boot-rocketmq</artifactId>
+            <version>${vivo.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vivo.it.base</groupId>
+            <artifactId>vivo-boot-servlet</artifactId>
+            <version>${vivo.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vivo.it.base</groupId>
+            <artifactId>vivo-boot-cache</artifactId>
+            <version>${vivo.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.vivo.it.component</groupId>
+                <artifactId>vivo-it-component</artifactId>
+                <version>${vivo-component.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <reporting>
+        <plugins>
+        </plugins>
+    </reporting>
+</project>
