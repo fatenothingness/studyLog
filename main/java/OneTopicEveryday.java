@@ -175,5 +175,44 @@ public class OneTopicEveryday {
         return res.next;
     }
 
+    /**
+     *74. 搜索二维矩阵
+     * 编写一个高效的算法来判断矩阵中，是否存在一个目标值。该矩阵具有如下特性：
+     *
+     * 每行中的整数从左到右按升序排列。
+     * 每行的第一个整数大于前一行的最后一个整数。
+     */
+    //考察二分法基础写法，需要注意的点为：1 取中间值的时候需要最小+最大+1再除二 2 判断条件时，不包含等于的条件里，需要 = mid-1
+    public boolean searchMatrix(int[][] matrix, int target) {
+        int low = 0;
+        int high = matrix.length-1;
+        //先用二分判断行数
+        while(low<high){
+            int mid = (low+high+1)/2;
+            if(matrix[mid][0]>target){
+                high = mid-1;
+            }else {
+                low = mid;
+            }
+        }
+        //取到行数后先判断第一个数是否等于目标数
+        if(matrix[low][0]==target){
+            return true;
+        }
+        //所在行进行二分查找
+        int left = 0;
+        int right = matrix[0].length-1;
+        while(left<right){
+            int mid = (left+right+1)/2;
+            if(matrix[low][mid]>target){
+                right = mid-1;
+            }else if(matrix[low][mid]<target){
+                left = mid;
+            }else {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
