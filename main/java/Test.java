@@ -9,8 +9,8 @@ public class Test {
         OneTopicEveryday oneTopicEveryday = new OneTopicEveryday();
         ListNode head = new ListNode(1,new ListNode(1,new ListNode(1,new ListNode(5,new ListNode(5,null)))));
         ListNode a = oneTopicEveryday.deleteDuplicates1(head);
-        int[] matrix = new int[]{1,2};
-        int  f = oneTopicEveryday.removeDuplicates(matrix);
+        int[] matrix = new int[]{111311, 1113};
+        String  f = oneTopicEveryday.largestNumber(matrix);
         System.out.println(f);
     }
 }

@@ -322,4 +322,67 @@ public class OneTopicEveryday {
         }
         return false;
     }
+
+    /**
+     * 179. 最大数
+     * 给定一组非负整数 nums，重新排列每个数的顺序（每个数不可拆分）使之组成一个最大的整数。
+     *
+     * 注意：输出结果可能非常大，所以你需要返回一个字符串而不是整数。
+     */
+    public String largestNumber(int[] nums) {
+        for(int i=0;i<nums.length-1;i++){
+            for(int j=0;j<nums.length-1-i;j++){
+                if(!contrast(nums[j],nums[j+1])){
+                    int tmp = nums[j];
+                    nums[j] = nums[j+1];
+                    nums[j+1] = tmp;
+                }
+            }
+        }
+        if(nums[0]==0){
+            return String.valueOf(0);
+        }
+        StringBuilder sb = new StringBuilder();
+        for(int a=0;a<nums.length;a++){
+            sb.append(nums[a]);
+        }
+        return sb.toString();
+    }
+    public boolean contrast(int a ,int b) {
+        char[] sa = (String.valueOf(a)+ b).toCharArray();
+        char[] sb = (String.valueOf(b)+ a).toCharArray();
+        int i = 0;
+        while (i < sa.length) {
+            if (sa[i] == sb[i]) {
+                i++;
+            } else if (sa[i] > sb[i]) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 783. 二叉搜索树节点最小距离
+     * 给你一个二叉搜索树的根节点 root ，返回 树中任意两不同节点值之间的最小差值 。
+     */
+    public int minDiffInBST(TreeNode root) {
+        List<Integer> list = new ArrayList<>();
+        dp(root,list);
+        int res = Integer.MAX_VALUE;
+        for(int i=0;i<list.size()-1;i++){
+            res = Math.min(res,list.get(i+1)-list.get(i));
+        }
+        return res;
+    }
+    public void dp(TreeNode root,List<Integer> list){
+        if(root==null){
+            return;
+        }
+        dp(root.left,list);
+        list.add(root.val);
+        dp(root.right,list);
+    }
 }
