@@ -1,8 +1,3 @@
-import com.alibaba.druid.sql.visitor.functions.Left;
-import org.apache.ibatis.scripting.xmltags.ForEachSqlNode;
-import org.apache.poi.ss.formula.functions.T;
-
-import java.lang.annotation.Target;
 import java.util.*;
 
 public class OneTopicEveryday {
@@ -325,9 +320,7 @@ public class OneTopicEveryday {
                 }
             }
         }
-        //一直没找到，返回false
         return false;
-
     }
 
     /**
@@ -1116,4 +1109,10 @@ public class OneTopicEveryday {
         }
         return Math.abs(sum - f[t] - f[t]);
     }
+
+
+    /**
+     * 给定一个无序数组，找出其中第k大的数
+     */
+
 }
