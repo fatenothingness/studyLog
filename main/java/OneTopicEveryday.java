@@ -955,4 +955,165 @@ public class OneTopicEveryday {
         }
         return ans;
     }
+    /**
+     * 523. 连续的子数组和
+     * 给你一个整数数组 nums 和一个整数 k ，编写一个函数来判断该数组是否含有同时满足下述条件的连续子数组：
+     *
+     * 子数组大小 至少为 2 ，且
+     * 子数组元素总和为 k 的倍数。
+     * 如果存在，返回 true ；否则，返回 false 。
+     *
+     * 如果存在一个整数 n ，令整数 x 符合 x = n * k ，则称 x 是 k 的一个倍数。
+     */
+    public boolean checkSubarraySum(int[] nums, int k) {
+        int[] sum = new int[nums.length];
+        sum[0] = nums[0];
+        for(int i=1;i<nums.length;i++){
+            sum[i]=sum[i-1]+nums[i];
+            if(sum[i]%k==0){
+                return true;
+            }
+        }
+        Set<Integer> set = new HashSet<>();
+        for(int j=2;j<nums.length;j++){
+            set.add(sum[j-2]%k);
+            if(set.contains(sum[j]%k)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 525. 连续数组
+     * 给定一个二进制数组 nums , 找到含有相同数量的 0 和 1 的最长连续子数组，并返回该子数组的长度。
+     */
+
+    public int findMaxLength(int[] nums) {
+        int n = nums.length;
+        int[] sum = new int[n + 1];
+        for (int i = 1; i <= n; i++){
+            sum[i] = sum[i - 1] + (nums[i - 1] == 1 ? 1 : -1);
+        }
+        int ans = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 2; i <= n; i++) {
+            if (!map.containsKey(sum[i - 2])) map.put(sum[i - 2], i - 2);
+            if (map.containsKey(sum[i])) ans = Math.max(ans, i - map.get(sum[i]));
+        }
+        return ans;
+    }
+
+    /**
+     * 160. 相交链表
+     * 给你两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表没有交点，返回 null 。
+     */
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode a = headA;
+        ListNode b = headB;
+        while(a!=null&&b!=null){
+            if(a==b){
+                return a;
+            }else {
+                a=a.next;
+                b=b.next;
+            }
+        }
+        if(a!=null){
+            while(a!=null){
+                headA=headA.next;
+                a=a.next;
+            }
+        }else if(b!=null){
+            while(b!=null){
+                headB=headB.next;
+                b=b.next;
+            }
+        }else {
+            return null;
+        }
+        while(headA!=null&&headB!=null){
+            if(headA==headB){
+                return headA;
+            }else {
+                headA=headA.next;
+                headB=headB.next;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 203. 移除链表元素
+     * 给你一个链表的头节点 head 和一个整数 val ，请你删除链表中所有满足 Node.val == val 的节点，并返回 新的头节点 。
+     * @param head
+     * @param val
+     * @return
+     */
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode a = head;
+        ListNode b = new ListNode(0,head);
+        ListNode res = b;
+        while(a!=null){
+            if(a.val==val){
+                a=a.next;
+                b.next = a;
+            }else {
+                a=a.next;
+                b=b.next;
+            }
+        }
+        return  res.next;
+    }
+
+    /**
+     * 494. 目标和
+     * 给你一个整数数组 nums 和一个整数 target 。
+     *
+     * 向数组中的每个整数前添加 '+' 或 '-' ，然后串联起所有整数，可以构造一个 表达式 ：
+     *
+     * 例如，nums = [2, 1] ，可以在 2 之前添加 '+' ，在 1 之前添加 '-' ，然后串联起来得到表达式 "+2-1" 。
+     * 返回可以通过上述方法构造的、运算结果等于 target 的不同 表达式 的数目。
+     */
+    public int findTargetSumWays(int[] nums, int t) {
+        int[]dp = new int[nums.length];
+        return dfs(nums, t, 0, 0);
+    }
+    int dfs(int[] nums, int t, int u, int cur) {
+        //如果目标值等于和返回1
+        if (u == nums.length) {
+            return cur == t ? 1 : 0;
+        }
+        //当前数取正号
+        int left = dfs(nums, t, u + 1, cur + nums[u]);
+        //当前数取负号
+        int right = dfs(nums, t, u + 1, cur - nums[u]);
+
+        return left + right;
+    }
+
+    /**
+     * 1049. 最后一块石头的重量 II
+     * 有一堆石头，用整数数组 stones 表示。其中 stones[i] 表示第 i 块石头的重量。
+     *
+     * 每一回合，从中选出任意两块石头，然后将它们一起粉碎。假设石头的重量分别为 x 和 y，且 x <= y。那么粉碎的可能结果如下：
+     *
+     * 如果 x == y，那么两块石头都会被完全粉碎；
+     * 如果 x != y，那么重量为 x 的石头将会完全粉碎，而重量为 y 的石头新重量为 y-x。
+     * 最后，最多只会剩下一块 石头。返回此石头 最小的可能重量 。如果没有石头剩下，就返回 0。
+     */
+    public int lastStoneWeightII(int[] ss) {
+        int n = ss.length;
+        int sum = 0;
+        for (int i : ss) sum += i;
+        int t = sum / 2;
+        int[] f = new int[t + 1];
+        for (int i = 1; i <= n; i++) {
+            int x = ss[i - 1];
+            for (int j = t; j >= x; j--) {
+                f[j] = Math.max(f[j], f[j - x] + x);
+            }
+        }
+        return Math.abs(sum - f[t] - f[t]);
+    }
 }
