@@ -1111,8 +1111,194 @@ public class OneTopicEveryday {
     }
 
 
+/**
+ * 879. 盈利计划
+ * 集团里有 n 名员工，他们可以完成各种各样的工作创造利润。
+ *
+ * 第 i 种工作会产生 profit[i] 的利润，它要求 group[i] 名成员共同参与。如果成员参与了其中一项工作，就不能参与另一项工作。
+ *
+ * 工作的任何至少产生 minProfit 利润的子集称为 盈利计划 。并且工作的成员总数最多为 n 。
+ *
+ * 有多少种计划可以选择？因为答案很大，所以 返回结果模 10^9 + 7 的值。
+ */
+int mod = (int)1e9+7;
+    public int profitableSchemes(int n, int min, int[] gs, int[] ps) {
+        int m = gs.length;
+        //定义三维dp数组，前i种工作中j个员工在min利润下的计划数。
+        long[][][] f = new long[m + 1][n + 1][min + 1];
+        //在最低利润为0且没有工作的情况下，不管多少员工的计划数都为1
+        for (int i = 0; i <= n; i++) f[0][i][0] = 1;
+        for (int i = 1; i <= m; i++) {
+            //遍历工作 a为当前遍历的工作所需人数，b为当前工作的利润
+            int a = gs[i - 1], b = ps[i - 1];
+            for (int j = 0; j <= n; j++) {
+                //遍历员工数
+                for (int k = 0; k <= min; k++) {
+                    //如果当前工作不够人数开始
+                    f[i][j][k] = f[i - 1][j][k];
+                    //如果当前员工数大于当前工作所需人数
+                    if (j >= a) {
+                        int u = Math.max(k - b, 0);
+                        f[i][j][k] += f[i - 1][j - a][u];
+                        if (f[i][j][k] >= mod) f[i][j][k] -= mod;
+                    }
+                }
+            }
+        }
+        return (int)f[m][n][min];
+    }
+
     /**
-     * 给定一个无序数组，找出其中第k大的数
+     * 518. 零钱兑换 II
+     * 给定不同面额的硬币和一个总金额。写出函数来计算可以凑成总金额的硬币组合数。假设每一种面额的硬币有无限个。
      */
 
+    public int change(int amount, int[] coins) {
+        int[] dp = new int[amount + 1];
+        dp[0] = 1; // 0元有一种, 那就是啥币也不拿
+        for (int i = 0; i < coins.length; i++) { // 01背包
+            for (int j = coins[i]; j <= amount; j++) {
+                dp[j] += dp[j - coins[i]]; // 组合, 累积
+            }
+        }
+        return dp[amount];
+    }
+
+    /**
+     * 931. 下降路径最小和
+     * 给你一个 n x n 的 方形 整数数组 matrix ，请你找出并返回通过 matrix 的下降路径 的 最小和 。
+     * 下降路径 可以从第一行中的任何元素开始，并从每一行中选择一个元素。
+     * 在下一行选择的元素和当前行所选元素最多相隔一列（即位于正下方或者沿对角线向左或者向右的第一个元素）。
+     * 具体来说，位置 (row, col) 的下一个元素应当是 (row + 1, col - 1)、(row + 1, col) 或者 (row + 1, col + 1) 。
+     */
+    public int minFallingPathSum(int[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        int[][] dp = new int[n][m];
+        for(int i=0;i<m;i++) dp[0][i]=matrix[0][i];
+        for(int i=1;i<n;i++){
+            for(int j=0;j<m;j++){
+                int v = matrix[i][j];
+                int left=j-1>=0?dp[i-1][j-1]:Integer.MAX_VALUE;
+                int up = dp[i-1][j];
+                int right = j+1<n?dp[i-1][j+1]:Integer.MAX_VALUE;
+                dp[i][j] = Math.min(left,Math.min(up,right))+v;
+            }
+        }
+        int res = Integer.MAX_VALUE;
+        for(int i =0;i<m;i++) res = Math.min(res,dp[n-1][i]);
+        return res;
+    }
+
+    /**
+     * 279. 完全平方数
+     * 给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, ...）使得它们的和等于 n。你需要让组成和的完全平方数的个数最少。
+     *
+     * 给你一个整数 n ，返回和为 n 的完全平方数的 最少数量 。
+     *
+     * 完全平方数 是一个整数，其值等于另一个整数的平方；换句话说，其值等于一个整数自乘的积。例如，1、4、9 和 16 都是完全平方数，而 3 和 11 不是。
+     *
+     *
+     */
+
+    public int numSquares(int n) {
+        int[] f = new int[n + 1];
+        Arrays.fill(f, 0x3f3f3f3f);
+        f[0] = 0;
+        for (int t = 1; t * t <= n; t++) {
+            int x = t * t;
+            for (int j = x; j <= n; j++) {
+                f[j] = Math.min(f[j], f[j - x] + 1);
+            }
+        }
+        return f[n];
+    }
+
+    /**
+     * 852. 山脉数组的峰顶索引
+     * 符合下列属性的数组 arr 称为 山脉数组 ：
+     * arr.length >= 3
+     * 存在 i（0 < i < arr.length - 1）使得：
+     * arr[0] < arr[1] < ... arr[i-1] < arr[i]
+     * arr[i] > arr[i+1] > ... > arr[arr.length - 1]
+     * 给你由整数组成的山脉数组 arr ，返回任何满足 arr[0] < arr[1] < ... arr[i - 1] < arr[i] > arr[i + 1] > ... > arr[arr.length - 1] 的下标 i
+     */
+    public int peakIndexInMountainArray(int[] arr) {
+        //等价替换成找到数据arr中的最大值的下标
+        int n = arr.length;
+        int l=1;
+        int r= n-1;
+        while(l<r){
+            int mid = l+r+1>>1;
+            if(arr[mid-1]<arr[mid]){
+                l=mid;
+            }else {
+                r=mid-1;
+            }
+        }
+        return r;
+    }
+    /**
+     *1449. 数位成本和为目标值的最大数字
+     * 给你一个整数数组 cost 和一个整数 target 。请你返回满足如下规则可以得到的 最大 整数：
+     *
+     * 给当前结果添加一个数位（i + 1）的成本为 cost[i] （cost 数组下标从 0 开始）。
+     * 总成本必须恰好等于 target 。
+     * 添加的数位中没有数字 0 。
+     * 由于答案可能会很大，请你以字符串形式返回。
+     *
+     * 如果按照上述要求无法得到任何整数，请你返回 "0" 。
+     */
+    public String largestNumber(int[] cost, int t) {
+        //定义dp数组，f为当前剩余成本下可以最多可以选择几个数。
+        int[] f = new int[t + 1];
+        //填充数组
+        Arrays.fill(f, Integer.MIN_VALUE);
+        //初始化
+        f[0] = 0;
+        for (int i = 1; i <= 9; i++) {
+            //从小到大开始遍历，u为当前数字的成本
+            int u = cost[i - 1];
+            //如果取用当前数字，则最多能取用多少个当前数
+            for (int j = u; j <= t; j++) {
+                f[j] = Math.max(f[j], f[j - u] + 1);
+            }
+        }
+        if (f[t] < 0) return "0";
+        String ans = "";
+        //确定最大数后开始从大到小开始
+        for (int i = 9, j = t; i >= 1; i--) {
+            int u = cost[i - 1];
+            //如果当前选择的数字满足f[j] == f[j - u] + 1（说明这个数字是符合取最多数的结果集里的）
+            while (j >= u && f[j] == f[j - u] + 1) {
+                ans += String.valueOf(i);
+                j -= u;
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 877. 石子游戏
+     * 亚历克斯和李用几堆石子在做游戏。偶数堆石子排成一行，每堆都有正整数颗石子 piles[i] 。
+     *
+     * 游戏以谁手中的石子最多来决出胜负。石子的总数是奇数，所以没有平局。
+     *
+     * 亚历克斯和李轮流进行，亚历克斯先开始。 每回合，玩家从行的开始或结束处取走整堆石头。 这种情况一直持续到没有更多的石子堆为止，此时手中石子最多的玩家获胜。
+     *
+     * 假设亚历克斯和李都发挥出最佳水平，当亚历克斯赢得比赛时返回 true ，当李赢得比赛时返回 false 。
+     */
+    public boolean stoneGame(int[] piles) {
+        int n = piles.length;
+        int[][] f= new int[n][n];
+        int[][] s= new int[n][n];
+        for(int j=0;j<n;j++){
+            f[j][j] = piles[j];
+            for(int i=j-1;i>=0;i--){
+                f[i][j] = Math.max(piles[i]+s[i+1][j],piles[j]+s[i][j-1]);
+                s[i][j] = Math.min(f[i+1][j],f[i][j-1]);
+            }
+        }
+        return f[0][n-1]>s[0][n-1];
+    }
 }
