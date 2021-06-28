@@ -1301,4 +1301,128 @@ int mod = (int)1e9+7;
         }
         return f[0][n-1]>s[0][n-1];
     }
+
+    /**
+     * 752. 打开转盘锁
+     * 你有一个带有四个圆形拨轮的转盘锁。每个拨轮都有10个数字： '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' 。
+     * 每个拨轮可以自由旋转：例如把 '9' 变为 '0'，'0' 变为 '9' 。每次旋转都只能旋转一个拨轮的一位数字。
+     * 锁的初始数字为 '0000' ，一个代表四个拨轮的数字的字符串。
+     * 列表 deadends 包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。
+     * 字符串 target 代表可以解锁的数字，你需要给出解锁需要的最小旋转次数，如果无论如何不能解锁，返回 -1 。
+     */
+    int step = 0;
+    public int openLock(String[] deadends, String target) {
+        if ("0000".equals(target)) {
+            return 0;
+        }
+        HashMap<String,Boolean> map =new HashMap<>();
+        for(String s:deadends){
+            map.put(s,true);
+        }
+        if (map.containsKey("0000")) {
+            return -1;
+        }
+        Queue<String> queue = new LinkedList<>();
+        queue.offer("0000");
+        Queue<String> queue2 = new LinkedList<>();
+        queue.offer(target);
+        HashMap<String,Integer> seed = new HashMap<>();
+        HashMap<String,Integer> seed2 = new HashMap<>();
+        seed.put("0000",0);
+        seed2.put(target,0);
+        while(!queue.isEmpty()&&!queue2.isEmpty()){
+            ++step;
+            Integer res ;
+            if(queue.size()<=queue2.size()){
+                res = process752(queue,seed,seed2,map);
+            }else {
+                res = process752(queue2,seed2,seed,map);
+            }
+            if(res!=-1){
+                return res;
+            }
+        }
+        return -1;
+    }
+    private Integer process752(Queue<String> queue,HashMap<String,Integer> seed,HashMap<String,Integer> seed2,HashMap<String,Boolean> map){
+        int size = queue.size();
+        for(int i=0;i<size;i++){
+            String status = queue.poll();
+            for(String nextStatus:get(status)){
+                if(!seed.containsKey(nextStatus)&&!map.containsKey(nextStatus)){
+                    if(seed2.containsKey(nextStatus)){
+                        return seed.get(nextStatus)+seed2.get(nextStatus);
+                    }else {
+                        queue.offer(nextStatus);
+                        seed.put(nextStatus,step);
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    public char numPrev(char x) {
+        return x == '0' ? '9' : (char) (x - 1);
+    }
+
+    public char numSucc(char x) {
+        return x == '9' ? '0' : (char) (x + 1);
+    }
+
+    // 枚举 status 通过一次旋转得到的数字
+    public List<String> get(String status) {
+        List<String> ret = new ArrayList<String>();
+        char[] array = status.toCharArray();
+        for (int i = 0; i < 4; ++i) {
+            char num = array[i];
+            array[i] = numPrev(num);
+            ret.add(new String(array));
+            array[i] = numSucc(num);
+            ret.add(new String(array));
+            array[i] = num;
+        }
+        return ret;
+    }
+
+    /**
+     * 909. 蛇梯棋
+     */
+    int n;
+    int[] nums;
+    public int snakesAndLadders(int[][] board) {
+        n = board.length;
+        if (board[0][0] != -1) return -1;
+        nums = new int[n * n + 1];
+        boolean isRight = true;
+        for (int i = n - 1, idx = 1; i >= 0; i--) {
+            for (int j = (isRight ? 0 : n - 1); isRight ? j < n : j >= 0; j += isRight ? 1 : -1) {
+                nums[idx++] = board[i][j];
+            }
+            isRight = !isRight;
+        }
+        int ans = bfs();
+        return ans;
+    }
+    int bfs() {
+        Deque<Integer> d = new ArrayDeque<>();
+        Map<Integer, Integer> m = new HashMap<>();
+        d.addLast(1);
+        m.put(1, 0);
+        while (!d.isEmpty()) {
+            int poll = d.pollFirst();
+            int step = m.get(poll);
+            if (poll == n * n) return step;
+            for (int i = 1; i <= 6; i++) {
+                int np = poll + i;
+                if (np <= 0 || np > n * n) continue;
+                if (nums[np] != -1) np = nums[np];
+                if (m.containsKey(np)) continue;
+                m.put(np, step + 1);
+                d.addLast(np);
+            }
+        }
+        return -1;
+    }
 }
+
