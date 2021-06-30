@@ -341,4 +341,135 @@ public class SwordToOffer {
         return  res;
     }
 
+    /**
+     * 剑指 Offer 14- I. 剪绳子
+     * 给你一根长度为 n 的绳子，请把绳子剪成整数长度的 m 段（m、n都是整数，n>1并且m>1），每段绳子的长度记为 k[0],k[1]...k[m-1] 。
+     * 请问 k[0]*k[1]*...*k[m-1] 可能的最大乘积是多少？例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+     */
+    public int cuttingRope(int n) {
+        if (n <= 3) return n - 1;
+        int[] dp = new int[n+1];
+        dp[0] = 0;
+        dp[1] = 1;
+        dp[2] = 2;
+        dp[3] = 3;
+        /*
+         *  外层循环i表示每一段要剪的绳子，去掉特殊情况从4开始
+         *  内层循环j表示将绳子剪成长度为j和i-j的两段
+         *  这样双层循环就相当于从下向上完成了剪绳子的逆过程
+         *  （剪绳子本来是将大段的绳子剪成小段，然后再在每小段上继续剪）
+         *  双层循环中外层循环从4开始一直到原始绳子长度n，每一段都到内层循环进行剪绳子
+         *  这样就得到长度在[4, n]区间内的每段绳子剪过之后的最大乘积
+         *  dp[i]记录当前长度绳子剪过之后的最大乘积
+         */
+        for (int i = 4; i <=n; i++) {
+            for (int j = 1; j < i; j++) {
+                dp[i] = Math.max(dp[i], dp[j] * dp[i - j]);
+            }
+        }
+        /* 返回剪绳子的最大乘积 */
+        return dp[n];
+    }
+
+    /**
+     * 剑指 Offer 16. 数值的整数次方
+     * 实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，xn）。不得使用库函数，同时不需要考虑大数问题。
+     */
+    public double myPow(double x, int n) {
+        //快速幂方法
+        if(x == 0) return 0;
+        long b = n;
+        double res = 1.0;
+        if(b < 0) {
+            x = 1 / x;
+            b = -b;
+        }
+        while(b > 0) {
+            if((b & 1) == 1) res *= x;
+            x *= x;
+            b >>= 1;
+        }
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 17. 打印从1到最大的n位数
+     * 输入数字 n，按顺序打印出从 1 到最大的 n 位十进制数。比如输入 3，则打印出 1、2、3 一直到最大的 3 位数 999。
+     */
+    public int[] printNumbers(int n) {
+        int num = 1;
+        for(int i=0;i<n;i++){
+            num *=10;
+        }
+        num--;
+        int[] res = new int[num];
+        for(int i=0;i<num;i++){
+            res[i] = i+1;
+        }
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 18. 删除链表的节点
+     * 给定单向链表的头指针和一个要删除的节点的值，定义一个函数删除该节点。
+     * 返回删除后的链表的头节点。
+     */
+    public ListNode deleteNode(ListNode head, int val) {
+        ListNode tmp = new ListNode(0,head);
+        ListNode root = head;
+        if(root.val==val){
+            return root.next;
+        }
+        while(root!=null){
+            if(root.val==val){
+                tmp.next = root.next;
+                break;
+            }else {
+                root=root.next;
+                tmp=tmp.next;
+            }
+        }
+        return head;
+    }
+
+    /**
+     * 剑指 Offer 19. 正则表达式匹配
+     * 请实现一个函数用来匹配包含'. '和'*'的正则表达式。
+     * 模式中的字符'.'表示任意一个字符，而'*'表示它前面的字符可以出现任意次（含0次）。
+     * 在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串"aaa"与模式"a.a"和"ab*ac*a"匹配，但与"aa.a"和"ab*a"均不匹配。
+     */
+    public boolean isMatch(String A, String B) {
+        int n = A.length();
+        int m = B.length();
+        boolean[][] f = new boolean[n + 1][m + 1];
+
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= m; j++) {
+                //分成空正则和非空正则两种
+                if (j == 0) {
+                    f[i][j] = i == 0;
+                } else {
+                    //非空正则分为两种情况 * 和 非*
+                    if (B.charAt(j - 1) != '*') {
+                        if (i > 0 && (A.charAt(i - 1) == B.charAt(j - 1) || B.charAt(j - 1) == '.')) {
+                            f[i][j] = f[i - 1][j - 1];
+                        }
+                    } else {
+                        //碰到 * 了，分为看和不看两种情况
+                        //不看
+                        if (j >= 2) {
+                            f[i][j] |= f[i][j - 2];
+                        }
+                        //看
+                        if (i >= 1 && j >= 2 && (A.charAt(i - 1) == B.charAt(j - 2) || B.charAt(j - 2) == '.')) {
+                            f[i][j] |= f[i - 1][j];
+                        }
+                    }
+                }
+            }
+        }
+        return f[n][m];
+    }
+
 }
+
