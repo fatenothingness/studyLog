@@ -20,6 +20,10 @@ public class Test {
         OneTopicEveryday oneTopicEveryday = new OneTopicEveryday();
         Student s = new Student();
         s.setName("zhangsan");
-        s.getInfo(20);
+        ListNode a = new ListNode(1,new ListNode(2,new ListNode(4,null)));
+        ListNode b = new ListNode(1,new ListNode(3,new ListNode(4,null)));
+        SwordToOffer swordToOffer = new SwordToOffer();
+        ListNode listNode = swordToOffer.mergeTwoLists(a, b);
+        System.out.println(listNode);
     }
 }

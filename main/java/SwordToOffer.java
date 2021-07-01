@@ -1,3 +1,5 @@
+import sun.jvm.hotspot.debugger.Page;
+
 import java.util.*;
 
 public class SwordToOffer {
@@ -471,5 +473,124 @@ public class SwordToOffer {
         return f[n][m];
     }
 
+    /**
+     * 剑指 Offer 21. 调整数组顺序使奇数位于偶数前面
+     * 输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有奇数位于数组的前半部分，所有偶数位于数组的后半部分。
+     */
+    public int[] exchange(int[] nums) {
+        int head = 0;
+        int end = nums.length-1;
+        while(head<end){
+            if(nums[head]%2==0){
+                swap(nums,head,end);
+                end--;
+            }else {
+                head++;
+            }
+        }
+        return nums;
+    }
+
+    private void swap(int[] n ,int a,int b){
+        int tmp = n[a];
+        n[a] = n[b];
+        n[b] = tmp;
+    }
+
+    /**
+     * 剑指 Offer 22. 链表中倒数第k个节点
+     * 输入一个链表，输出该链表中倒数第k个节点。为了符合大多数人的习惯，本题从1开始计数，即链表的尾节点是倒数第1个节点。
+     * 例如，一个链表有 6 个节点，从头节点开始，它们的值依次是 1、2、3、4、5、6。这个链表的倒数第 3 个节点是值为 4 的节点
+     */
+    public ListNode getKthFromEnd(ListNode head, int k) {
+        ListNode f = head;
+        ListNode res = head;
+        while(k>0){
+            f=f.next;
+            k--;
+        }
+        while(f!=null){
+            f=f.next;
+            res=res.next;
+        }
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 24. 反转链表
+     * 定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点。
+     */
+    public ListNode reverseList(ListNode head) {
+        return process(head);
+    }
+
+    private ListNode process(ListNode head){
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode newHead = process(head.next);
+        head.next.next = head;
+        head.next = null;
+        return newHead;
+    }
+
+    /**
+     * 剑指 Offer 25. 合并两个排序的链表
+     * 输入两个递增排序的链表，合并这两个链表并使新链表中的节点仍然是递增排序的。
+     */
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode res = new ListNode(1);
+        ListNode ans = res;
+        while(l1!=null&&l2!=null){
+            if(l1.val<=l2.val){
+                res.next=l1;
+                l1=l1.next;
+            }else {
+                res.next=l2;
+                l2=l2.next;
+            }
+            res=res.next;
+        }
+        if(l1!=null){
+            res.next = l1;
+        }else {
+            res.next = l2;
+        }
+        return ans.next;
+    }
+
+    /**
+     * 剑指 Offer 26. 树的子结构
+     * 输入两棵二叉树A和B，判断B是不是A的子结构。(约定空树不是任意一个树的子结构)
+     * B是A的子结构， 即 A中有出现和B相同的结构和节点值。
+     */
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        if(B==null){
+            return false;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(A);
+        while(!queue.isEmpty()){
+            TreeNode now = queue.poll();
+            if(now.val== B.val){
+                if(process(now,B)){
+                    return true;
+                }
+            }
+            if(now.left!=null) queue.add(now.left);
+            if(now.right!=null) queue.add(now.right);
+        }
+        return false;
+    }
+
+    public boolean process(TreeNode A, TreeNode B){
+        if(B==null){
+            return true;
+        }
+        if(A==null||A.val!=B.val){
+            return false;
+        }
+        return process(A.left,B.left)&&process(A.right,B.right);
+    }
 }
 
