@@ -1,4 +1,4 @@
-import sun.jvm.hotspot.debugger.Page;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 
@@ -591,6 +591,304 @@ public class SwordToOffer {
             return false;
         }
         return process(A.left,B.left)&&process(A.right,B.right);
+    }
+    /**
+     * 剑指 Offer 37. 序列化二叉树
+     * 请实现两个函数，分别用来序列化和反序列化二叉树。
+     * 你需要设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+     */
+    public class Codec {
+        int INF = -2000;
+        TreeNode emptyNode = new TreeNode(INF);
+        public String serialize(TreeNode root) {
+            if (root == null) return "";
+
+            StringBuilder sb = new StringBuilder();
+            Deque<TreeNode> d = new ArrayDeque<>();
+            d.addLast(root);
+            while (!d.isEmpty()) {
+                TreeNode poll = d.pollFirst();
+                sb.append(poll.val + "_");
+                if (!poll.equals(emptyNode)) {
+                    d.addLast(poll.left != null ? poll.left : emptyNode);
+                    d.addLast(poll.right != null ? poll.right : emptyNode);
+                }
+            }
+            return sb.toString();
+        }
+
+        public TreeNode deserialize(String data) {
+            if (data.equals("")) return null;
+
+            String[] ss = data.split("_");
+            int n = ss.length;
+            TreeNode root = new TreeNode(Integer.parseInt(ss[0]));
+            Deque<TreeNode> d = new ArrayDeque<>();
+            d.addLast(root);
+            for (int i = 1; i < n - 1; i += 2) {
+                TreeNode node = d.pollFirst();
+                int a = Integer.parseInt(ss[i]), b = Integer.parseInt(ss[i + 1]);
+                if (a != INF) {
+                    node.left = new TreeNode(a);
+                    d.addLast(node.left);
+                }
+                if (b != INF) {
+                    node.right = new TreeNode(b);
+                    d.addLast(node.right);
+                }
+            }
+            return root;
+        }
+    }
+
+    /**
+     * 剑指 Offer 20. 表示数值的字符串
+     * 请实现一个函数用来判断字符串是否表示数值（包括整数和小数）。
+     */
+    public boolean isNumber(String s) {
+        if (s == null || s.length() == 0) return false;
+        //去掉首位空格
+        s = s.trim();
+        boolean numFlag = false;
+        boolean dotFlag = false;
+        boolean eFlag = false;
+        for (int i = 0; i < s.length(); i++) {
+            //判定为数字，则标记numFlag
+            if (s.charAt(i) >= '0' && s.charAt(i) <= '9') {
+                numFlag = true;
+                //判定为.  需要没出现过.并且没出现过e
+            } else if (s.charAt(i) == '.' && !dotFlag && !eFlag) {
+                dotFlag = true;
+                //判定为e，需要没出现过e，并且出过数字了
+            } else if ((s.charAt(i) == 'e' || s.charAt(i) == 'E') && !eFlag && numFlag) {
+                eFlag = true;
+                numFlag = false;//为了避免123e这种请求，出现e之后就标志为false
+                //判定为+-符号，只能出现在第一位或者紧接e后面
+            } else if ((s.charAt(i) == '+' || s.charAt(i) == '-') && (i == 0 || s.charAt(i - 1) == 'e' || s.charAt(i - 1) == 'E')) {
+
+                //其他情况，都是非法的
+            } else {
+                return false;
+            }
+        }
+        return numFlag;
+    }
+
+    /**
+     * 剑指 Offer 27. 二叉树的镜像
+     * 请完成一个函数，输入一个二叉树，该函数输出它的镜像。
+     */
+    public TreeNode mirrorTree(TreeNode root) {
+        process27(root);
+        return root;
+    }
+    private void process27(TreeNode root){
+        if(root==null){
+            return;
+        }
+        TreeNode left = root.left;
+        TreeNode right = root.right;
+        root.right = left;
+        root.left  = right;
+        process27(root.left);
+        process27(root.right);
+    }
+
+    /**
+     * 剑指 Offer 28. 对称的二叉树
+     * 请实现一个函数，用来判断一棵二叉树是不是对称的。如果一棵二叉树和它的镜像一样，那么它是对称的。
+     * 例如，二叉树 [1,2,2,3,4,4,3] 是对称的。
+     */
+    public boolean isSymmetric(TreeNode root) {
+        if(root==null){
+            return true;
+        }else{
+            return process28(root.left,root.right);
+        }
+    }
+    private boolean process28(TreeNode left,TreeNode right){
+        if(left==null&&right==null){
+            return true;
+        }else if(left!=null&&right!=null&&left.val==right.val){
+            return process28(left.left,right.right)&&process28(left.right,right.left);
+        }else {
+            return false;
+        }
+    }
+
+    /**
+     * 剑指 Offer 29. 顺时针打印矩阵
+     * 输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字。
+     */
+    public int[] spiralOrder(int[][] matrix) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) {
+            return new int[0];
+        }
+        int n = matrix.length;
+        int m = matrix[0].length;
+        int[] res = new int[n*m];
+        int l=0;int r=m-1;int h = 0;int f = n-1;
+        int i=0;
+        while(i<n*m){
+            for(int t=l;t<=r;t++){
+                res[i++]=matrix[h][t];
+            }
+            for(int t=h+1;t<=f;t++){
+                res[i++]=matrix[t][r];
+            }
+            if(l<r&&h<f){
+                for(int t=r-1;t>l;t--){
+                    res[i++]=matrix[f][t];
+                }
+                for(int t=f;t>h;t--){
+                    res[i++]=matrix[t][l];
+                }
+            }
+            l++;
+            r--;
+            h++;
+            f--;
+        }
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 31. 栈的压入、弹出序列
+     * 输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否为该栈的弹出顺序。
+     * 假设压入栈的所有数字均不相等。
+     * 例如，序列 {1,2,3,4,5} 是某栈的压栈序列，序列 {4,5,3,2,1} 是该压栈序列对应的一个弹出序列，但 {4,3,5,1,2} 就不可能是该压栈序列的弹出序列。
+     */
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        Stack<Integer> stack =new Stack<>();
+        int i =0;
+        int j=0;
+        while(i<pushed.length){
+            stack.push(pushed[i++]);
+            if(stack.peek()==popped[j++]){
+                stack.pop();
+                while(!stack.isEmpty()&&stack.peek()==popped[j++]){
+                    stack.pop();
+                }
+            }
+        }
+        if(stack.isEmpty()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    /**
+     * 剑指 Offer 32 - I. 从上到下打印二叉树
+     * 从上到下打印出二叉树的每个节点，同一层的节点按照从左到右的顺序打印。
+     */
+    public int[] levelOrder(TreeNode root) {
+        if(root==null){
+            return new int[0];
+        }
+        List<Integer> list= new ArrayList<>();
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while(!queue.isEmpty()){
+            TreeNode now = queue.poll();
+            list.add(now.val);
+            if(now.left!=null){
+                queue.add(now.left);
+            }
+            if(now.right!=null){
+                queue.add(now.right);
+            }
+        }
+        int[] res = new int[list.size()];
+        for(int a=0;a<list.size();a++){
+            res[a] =list.get(a);
+        }
+        return res;
+     }
+
+    /**
+     * 剑指 Offer 32 - II. 从上到下打印二叉树 II
+     * 从上到下按层打印二叉树，同一层的节点按从左到右的顺序打印，每一层打印到一行。
+     */
+
+    public List<List<Integer>> levelOrder2(TreeNode root) {
+        List<List<Integer>> res= new ArrayList<>();
+        if(root==null){
+            return res;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            List<Integer> tmp =new ArrayList<>();
+            TreeNode t;
+                while(size>0){
+                t = queue.poll();
+                tmp.add(t.val);
+                if(t.left!=null){
+                    queue.add(t.left);
+                }
+                if(t.right!=null){
+                    queue.add(t.right);
+                }
+                size--;
+            }
+            res.add(tmp);
+        }
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 32 - III. 从上到下打印二叉树 III
+     * 请实现一个函数按照之字形顺序打印二叉树，即第一行按照从左到右的顺序打印，第二层按照从右到左的顺序打印，第三行再按照从左到右的顺序打印，其他行以此类推。
+     */
+    public List<List<Integer>> levelOrder3(TreeNode root) {
+        List<List<Integer>> res= new ArrayList<>();
+        Deque<TreeNode> queue = new LinkedList();
+        if(root!=null){
+            queue.add(root);
+        }
+        Boolean flag = true;
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            List<Integer> tmp =new ArrayList<>();
+            TreeNode t;
+            while(size>0){
+                //奇数列时，从队列尾部开始取，然后把左右子节点从队列头插入（下次从头部开始取则先取到右节点）
+                if(flag) {
+                    t = queue.removeLast();
+                    tmp.add(t.val);
+                    if (t.left != null) {
+                        queue.offerFirst(t.left);
+                    }
+                    if (t.right != null) {
+                        queue.offerFirst(t.right);
+                    }
+                    //偶数列时，从队列头开始取，把右左子节点从尾部插入（下次从尾部开始取的时候就能先取到左节点）
+                }else {
+                    t = queue.removeFirst();
+                    tmp.add(t.val);
+                    if(t.right!=null){
+                        queue.offerLast(t.right);
+                    }
+                    if(t.left!=null){
+                        queue.offerLast(t.left);
+                    }
+                }
+                size--;
+            }
+            flag = !flag;
+            res.add(tmp);
+        }
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 33. 二叉搜索树的后序遍历序列
+     * 输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。假设输入的数组的任意两个数字都互不相同
+     */
+    public boolean verifyPostorder(int[] postorder) {
+
     }
 }
 

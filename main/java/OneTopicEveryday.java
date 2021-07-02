@@ -1393,6 +1393,7 @@ int mod = (int)1e9+7;
     public int snakesAndLadders(int[][] board) {
         n = board.length;
         if (board[0][0] != -1) return -1;
+        //把数组变成一维数组
         nums = new int[n * n + 1];
         boolean isRight = true;
         for (int i = n - 1, idx = 1; i >= 0; i--) {
@@ -1423,6 +1424,194 @@ int mod = (int)1e9+7;
             }
         }
         return -1;
+    }
+
+    /**
+     * 815. 公交路线
+     * 给你一个数组 routes ，表示一系列公交线路，其中每个 routes[i] 表示一条公交线路，第 i 辆公交车将会在上面循环行驶。
+     * 例如，路线 routes[0] = [1, 5, 7] 表示第 0 辆公交车会一直按序列 1 -> 5 -> 7 -> 1 -> 5 -> 7 -> 1 -> ... 这样的车站路线行驶。
+     * 现在从 source 车站出发（初始时不在公交车上），要前往 target 车站。 期间仅可乘坐公交车。
+     * 求出 最少乘坐的公交车数量 。如果不可能到达终点车站，返回 -1 。
+     */
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        if(source==target){
+            return 0;
+        }
+        //如果能到达目的地，每辆车最多坐一次，所以在车的角度进行广度优先遍历
+        Map<Integer,List<Integer>> map = new HashMap<>();
+        for(int i=0;i<routes.length;i++){
+            for(int j=0;j<routes[i].length;j++){
+                if(!map.containsKey(routes[i][j])){
+                    List<Integer> a = new ArrayList<>();
+                    a.add(i);
+                    map.put(routes[i][j],a);
+                }else {
+                    List<Integer> a = map.get(routes[i][j]);
+                    a.add(i);
+                }
+            }
+        }
+        if(!map.containsKey(source)||!map.containsKey(target)){
+            return -1;
+        }
+        //记录当前车辆是否坐过
+        Map<Integer,Integer> step = new HashMap<>();
+        Queue<Integer> queue =new LinkedList<>();
+        queue.add(source);
+        step.put(source,0);
+        while(!queue.isEmpty()){
+            //获取当前节点可以乘坐的公交路线
+            int now = queue.poll();
+            int res = step.get(now)+1;
+            List<Integer> next = map.get(now);
+            for(int i=0;i<next.size();i++){
+                int[] route = routes[next.get(i)];
+                for(int a:route){
+                    if(!step.containsKey(a)&&a!=now){
+                        List<Integer> list = map.get(a);
+                        list.remove(next.get(i));
+                        queue.add(a);
+                        step.put(a,res);
+                    }
+                    if(a==target){
+                        return res;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 168. Excel表列名称
+     * 给你一个整数 columnNumber ，返回它在 Excel 表中相对应的列名称。
+     * A -> 1
+     * B -> 2
+     * C -> 3
+     * Z -> 26
+     * AA -> 27
+     * AB -> 28
+     */
+
+    public String convertToTitle(int columnNumber) {
+        char[] dic = new char[26];
+        for(int i=0;i<dic.length;i++){
+            dic[i] = (char)('A'+i);
+        }
+        StringBuilder sb = new StringBuilder();
+        int tmp;
+        while(columnNumber>0){
+            columnNumber--;
+            tmp = columnNumber%26;
+            sb.insert(0,dic[tmp]);
+            columnNumber/=26;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * LCP 07. 传递信息
+     * 小朋友 A 在和 ta 的小伙伴们玩传信息游戏，游戏规则如下：
+     *
+     * 有 n 名玩家，所有玩家编号分别为 0 ～ n-1，其中小朋友 A 的编号为 0
+     * 每个玩家都有固定的若干个可传信息的其他玩家（也可能没有）。传信息的关系是单向的（比如 A 可以向 B 传信息，但 B 不能向 A 传信息）。
+     * 每轮信息必须需要传递给另一个人，且信息可重复经过同一个人
+     */
+    public int numWays(int n, int[][] relation, int k) {
+        Map<Integer,List<Integer>> map = new HashMap<>();
+        for(int i=0;i<relation.length;i++){
+            if(map.containsKey(relation[i][0])){
+                 map.get(relation[i][0]).add(relation[i][1]);
+            }else {
+                List<Integer> list= new ArrayList<>();
+                list.add(relation[i][1]);
+                map.put(relation[i][0],list);
+            }
+        }
+        Queue<Integer> queue =new LinkedList<>();
+        queue.add(0);
+        int res = 0;
+        while(!queue.isEmpty()&&k>0){
+            k--;
+            int size = queue.size();
+            while(size-->0){
+                Integer now = queue.poll();
+                List<Integer> list = map.get(now);
+                if(list!=null){
+                    for(int i=0;i<list.size();i++){
+                        queue.add(list.get(i));
+                    }
+                }
+            }
+        }
+        while(!queue.isEmpty()){
+            if(queue.poll()==n-1){
+                res++;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 1833. 雪糕的最大数量
+     * 夏日炎炎，小男孩 Tony 想买一些雪糕消消暑。
+     *
+     * 商店中新到 n 支雪糕，用长度为 n 的数组 costs 表示雪糕的定价，其中 costs[i] 表示第 i 支雪糕的现金价格。Tony 一共有 coins 现金可以用于消费，他想要买尽可能多的雪糕。
+     *
+     * 给你价格数组 costs 和现金量 coins ，请你计算并返回 Tony 用 coins 现金能够买到的雪糕的 最大数量 。
+     *
+     * 注意：Tony 可以按任意顺序购买雪糕。
+     */
+    public int maxIceCream(int[] costs, int coins) {
+        Arrays.sort(costs);
+        int res = 0;
+        for(int i=0;i<costs.length;i++){
+            if(coins>=costs[i]){
+                res++;
+                coins-=costs[i];
+            }else {
+                break;
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 72. 编辑距离
+     * 给你两个单词 word1 和 word2，请你计算出将 word1 转换成 word2 所使用的最少操作数 。
+     *
+     * 你可以对一个单词进行如下三种操作：
+     *
+     * 插入一个字符
+     * 删除一个字符
+     * 替换一个字符
+     */
+    public int minDistance(String word1, String word2) {
+        int n = word1.length();
+        int m = word2.length();
+        if (n * m == 0) {
+            return n + m;
+        }
+        int[][] dp = new int[n][m];
+        // 边界状态初始化
+        for (int i = 0; i < n + 1; i++) {
+            dp[i][0] = i;
+        }
+        for (int j = 0; j < m + 1; j++) {
+            dp[0][j] = j;
+        }
+        for (int i = 1; i < n + 1; i++) {
+            for (int j = 1; j < m + 1; j++) {
+                int left = dp[i - 1][j] + 1;
+                int down = dp[i][j - 1] + 1;
+                int left_down = dp[i - 1][j - 1];
+                if (word1.charAt(i - 1) != word2.charAt(j - 1)) {
+                    left_down += 1;
+                }
+                dp[i][j] = Math.min(left, Math.min(down, left_down));
+            }
+        }
+        return dp[n][m];
     }
 }
 

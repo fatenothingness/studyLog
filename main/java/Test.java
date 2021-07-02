@@ -18,12 +18,27 @@ public class Test {
 
     public static void main(String args[]){
         OneTopicEveryday oneTopicEveryday = new OneTopicEveryday();
-        Student s = new Student();
-        s.setName("zhangsan");
-        ListNode a = new ListNode(1,new ListNode(2,new ListNode(4,null)));
-        ListNode b = new ListNode(1,new ListNode(3,new ListNode(4,null)));
-        SwordToOffer swordToOffer = new SwordToOffer();
-        ListNode listNode = swordToOffer.mergeTwoLists(a, b);
-        System.out.println(listNode);
+        int[][] two = new int[][]{{1,2,7},{3,6,7}};
+        int i = oneTopicEveryday.numBusesToDestination(two, 1, 6);
+       // System.out.println(oneTopicEveryday.convertToTitle(701));
+        SwordToOffer s= new SwordToOffer();
+        TreeNode root = new TreeNode(0);
+        TreeNode a = new TreeNode(2);
+        TreeNode b = new TreeNode(4);
+        TreeNode c = new TreeNode(1);
+        TreeNode d = new TreeNode(3);
+        TreeNode e = new TreeNode(-1);
+        TreeNode f = new TreeNode(5);
+        TreeNode g = new TreeNode(1);
+        TreeNode h = new TreeNode(6);
+        TreeNode m = new TreeNode(8);
+        root.left=a;root.right=b;
+        a.left=c;
+        b.left =d; b.right=e;
+        c.left=f; c.right=g;
+        d.right=h;
+        e.right = m;
+        System.out.println(s.levelOrder3(root));
+
     }
 }
