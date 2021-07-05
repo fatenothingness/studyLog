@@ -11,15 +11,17 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 public class Test {
 
+    volatile int a = 0;
 
-    public static void main(String args[]){
+    public static void main(String args[]) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         OneTopicEveryday oneTopicEveryday = new OneTopicEveryday();
         int[][] two = new int[][]{{1,2,7},{3,6,7}};
-        int i = oneTopicEveryday.numBusesToDestination(two, 1, 6);
        // System.out.println(oneTopicEveryday.convertToTitle(701));
         SwordToOffer s= new SwordToOffer();
         TreeNode root = new TreeNode(0);
@@ -38,7 +40,8 @@ public class Test {
         c.left=f; c.right=g;
         d.right=h;
         e.right = m;
-        System.out.println(s.levelOrder3(root));
 
+        int[] t =new int[]{1,2,3,2,2,2,5,4,2};
+        System.out.println(s.majorityElement(t));
     }
 }

@@ -888,7 +888,148 @@ public class SwordToOffer {
      * 输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历结果。如果是则返回 true，否则返回 false。假设输入的数组的任意两个数字都互不相同
      */
     public boolean verifyPostorder(int[] postorder) {
+        int n= postorder.length;
+        if(n==0){
+            return true;
+        }
+        return process33(postorder,0,n-1);
+    }
 
+    private Boolean process33(int[] postorder,int left,int right){
+        //当左树范围等于右树说明到了叶节点，返回成功
+        if(left>=right){
+            return true;
+        }
+        //从左开始遍历知道找到第一个大于根节点到数m，则从 left 到 m-1为 但前到左树范围
+        int p = left;
+        while(postorder[p]<postorder[right]){
+            p++;
+        }
+        //然后从m开始遍历，一直到根节点，如果全部大于 根节点right 说明当前满足 左树全部树<root<右树全部数
+        int m=p;
+        while(postorder[p]>postorder[right]){
+            p++;
+        }
+        //在左树范围和右树范围递归此过程
+        return p==right&&process33(postorder,left,m-1)&&process33(postorder,m,right-1);
+    }
+
+    /**
+     * 剑指 Offer 39. 数组中出现次数超过一半的数字
+     * 数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字。
+     * 你可以假设数组是非空的，并且给定的数组总是存在多数元素。
+     */
+    public int majorityElement(int[] nums) {
+        Integer max = (nums.length+1)/2;
+        HashMap<Integer,Integer> map =new HashMap<>();
+        for(int i=0;i<nums.length;i++){
+            if(map.containsKey(nums[i])){
+                map.put(nums[i],map.get(nums[i])+1);
+                if(map.get(nums[i])>=max){
+                    return nums[i];
+                }
+            }else {
+                map.put(nums[i],1);
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 剑指 Offer 40. 最小的k个数
+     * 输入整数数组 arr ，找出其中最小的 k 个数。例如，输入4、5、1、6、2、7、3、8这8个数字，则最小的4个数字是1、2、3、4。
+     */
+    public int[] getLeastNumbers(int[] arr, int k) {
+        Arrays.sort(arr);
+        int[] res = new int[k];
+        for(int i=0;i<k;i++){
+            res[i] = arr[i];
+        }
+        return  res;
+    }
+
+
+    /**
+     * 剑指 Offer 41. 数据流中的中位数
+     * 如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位于中间的数值。
+     * 如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
+     */
+    class MedianFinder {
+        PriorityQueue<Integer> left;//大顶
+        PriorityQueue<Integer> right;//小顶
+        public MedianFinder() {
+            left=new PriorityQueue<>((n1,n2)->n2-n1);
+            right=new PriorityQueue<>();
+        }
+        public void addNum(int num) {
+            left.add(num);
+            right.add(left.poll());
+            if(left.size()+1<right.size())
+                left.add(right.poll());
+        }
+        public double findMedian() {
+            if(right.size()>left.size())return right.peek();
+            return (double)(left.peek()+right.peek())/2;
+        }
+    }
+
+    /**
+     * 剑指 Offer 42. 连续子数组的最大和
+     * 输入一个整型数组，数组中的一个或连续多个整数组成一个子数组。求所有子数组的和的最大值。
+     * 要求时间复杂度为O(n)。
+     */
+    public int maxSubArray(int[] nums) {
+        int[] dp =new int[nums.length];
+        dp[0] = nums[0];
+        int res = dp[0];
+        for(int i=1;i<nums.length;i++){
+            dp[i] = Math.max(dp[i-1]+nums[i],nums[i]);
+            res = Math.max(res,dp[i]);
+        }
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 43. 1～n 整数中 1 出现的次数
+     * 输入一个整数 n ，求1～n这n个整数的十进制表示中1出现的次数。
+     * 例如，输入12，1～12这些整数中包含1 的数字有1、10、11和12，1一共出现了5次。
+     */
+    public int countDigitOne(int n) {
+        int ans=0;
+        int count_1_pre=0;//前n位的1的个数
+        int count_n_num=1;//叠乘10（如1  10  100 1000），用来取余数和计算1个数
+        int t=n;
+        while(t!=0){
+            int k=t%10;
+            if(k==1){
+                ans+=k*count_1_pre+n%count_n_num+1;
+            }else if(k>1){
+                ans+=k*count_1_pre+count_n_num;
+            }
+            count_1_pre=10*count_1_pre+count_n_num;
+            count_n_num*=10;
+            t=t/10;
+        }
+        return ans;
+    }
+
+    /**
+     * 剑指 Offer 44. 数字序列中某一位的数字
+     * 数字以0123456789101112131415…的格式序列化到一个字符序列中。在这个序列中，第5位（从下标0开始计数）是5，第13位是1，第19位是4，等等。
+     * 请写一个函数，求任意第n位对应的数字。
+     */
+    public int findNthDigit(int n) {
+        int digit = 1;
+        long start = 1;
+        long count = 9;
+        while (n > count) { // 1.
+            n -= count;
+            digit += 1;
+            start *= 10;
+            count = digit * start * 9;
+        }
+        long num = start + (n - 1) / digit; // 2.
+        return Long.toString(num).charAt((n - 1) % digit) - '0'; // 3.
     }
 }
 
