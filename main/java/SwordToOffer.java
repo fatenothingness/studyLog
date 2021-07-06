@@ -1031,5 +1031,77 @@ public class SwordToOffer {
         long num = start + (n - 1) / digit; // 2.
         return Long.toString(num).charAt((n - 1) % digit) - '0'; // 3.
     }
+
+    /**
+     * 剑指 Offer 48. 最长不含重复字符的子字符串
+     * 请从字符串中找出一个最长的不包含重复字符的子字符串，计算该最长子字符串的长度。
+     */
+    public int lengthOfLongestSubstring(String s) {
+        if(s.equals("")){
+            return 0;
+        }
+        int n = s.length();
+        HashMap<Character,Integer> map = new HashMap<>();
+        map.put(s.charAt(0),1);
+        int left = 0;
+        int right  =1;
+        int res = 1;
+        while(right<n){
+            char now = s.charAt(right);
+            while(map.containsKey(now)){
+                map.remove(s.charAt(left++));
+            }
+            map.put(now,1);
+            res = Math.max(res,right-left+1);
+            right++;
+        }
+        return res;
+    }
+
+    /**
+     * 剑指 Offer 49. 丑数
+     * 我们把只包含质因子 2、3 和 5 的数称作丑数（Ugly Number）。求按从小到大的顺序的第 n 个丑数。
+     */
+
+    public int nthUglyNumber(int n) {
+        int a = 0, b = 0, c = 0;
+        int[] dp = new int[n];
+        dp[0] = 1;
+        for(int i = 1; i < n; i++) {
+            int n2 = dp[a] * 2, n3 = dp[b] * 3, n5 = dp[c] * 5;
+            dp[i] = Math.min(Math.min(n2, n3), n5);
+            if(dp[i] == n2) a++;
+            if(dp[i] == n3) b++;
+            if(dp[i] == n5) c++;
+        }
+        return dp[n - 1];
+    }
+
+    /**
+     * 剑指 Offer 50. 第一个只出现一次的字符
+     * 在字符串 s 中找出第一个只出现一次的字符。如果没有，返回一个单空格。 s 只包含小写字母。
+     */
+    public char firstUniqChar(String s) {
+        HashMap<Character,Integer> map =new HashMap<>();
+        int[] num = new int[26];
+        for(int i=0;i<s.length();i++){
+            char c = s.charAt(i);
+            if(!map.containsKey(c)){
+                map.put(c,i);
+            }
+            num[c-'a']++;
+        }
+        int n = Integer.MAX_VALUE;
+        for(int i=0;i<num.length;i++){
+            if(num[i]==1){
+                n = Math.min(map.get((char)('a'+i)),n);
+            }
+        }
+        if(n==Integer.MAX_VALUE){
+            return ' ';
+        }else {
+            return s.charAt(n);
+        }
+    }
 }
 

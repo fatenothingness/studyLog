@@ -42,6 +42,6 @@ public class Test {
         e.right = m;
 
         int[] t =new int[]{1,2,3,2,2,2,5,4,2};
-        System.out.println(s.majorityElement(t));
+        System.out.println(s.firstUniqChar("abaccdeff"));
     }
 }
