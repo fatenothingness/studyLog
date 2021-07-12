@@ -1633,5 +1633,63 @@ int mod = (int)1e9+7;
         }
         return ans;
     }
+
+    /**
+     * 981. 基于时间的键值存储
+     * 创建一个基于时间的键值存储类 TimeMap，它支持下面两个操作：
+     *
+     * 1. set(string key, string value, int timestamp)
+     *
+     * 存储键 key、值 value，以及给定的时间戳 timestamp。
+     * 2. get(string key, int timestamp)
+     *
+     * 返回先前调用 set(key, value, timestamp_prev) 所存储的值，其中 timestamp_prev <= timestamp。
+     * 如果有多个这样的值，则返回对应最大的  timestamp_prev 的那个值。
+     * 如果没有值，则返回空字符串（""）。
+     */
+    class TimeMap {
+
+        HashMap<String,TreeMap<Integer,String>> map;
+
+        /** Initialize your data structure here. */
+        public TimeMap() {
+            this.map= new HashMap<>();
+
+        }
+
+        public void set(String key, String value, int timestamp) {
+            if(map.containsKey(key)){
+                TreeMap<Integer,String> timeMap = map.get(key);
+                timeMap.put(timestamp,value);
+            }else {
+                TreeMap<Integer,String> timeMap = new TreeMap<>();
+                timeMap.put(timestamp,value);
+                map.put(key,timeMap);
+            }
+        }
+
+        public String get(String key, int timestamp) {
+            Map.Entry<Integer, String> entry = map.getOrDefault(key, new TreeMap<>()).floorEntry(timestamp);
+            return entry == null ? "" : entry.getValue();
+        }
+    }
+
+
+    /**
+     * 274. H 指数
+     * 给定一位研究者论文被引用次数的数组（被引用次数是非负整数）。编写一个方法，计算出研究者的 h 指数。
+     *
+     * h 指数的定义：h 代表“高引用次数”（high citations），一名科研人员的 h 指数是指他（她）的 （N 篇论文中）总共有 h 篇论文分别被引用了至少 h 次。且其余的 N - h 篇论文每篇被引用次数 不超过 h 次。
+     */
+    public int hIndex(int[] citations) {
+        Arrays.sort(citations);
+        int h = 0, i = citations.length - 1;
+        while (i >= 0 && citations[i] > h) {
+            h++;
+            i--;
+        }
+        return h;
+    }
+
 }
 
