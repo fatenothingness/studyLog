@@ -11,37 +11,82 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 public class Test {
 
-    volatile int a = 0;
+    public static void main(String args[]) {
 
-    public static void main(String args[]) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        OneTopicEveryday oneTopicEveryday = new OneTopicEveryday();
-        int[][] two = new int[][]{{1,2,7},{3,6,7}};
-       // System.out.println(oneTopicEveryday.convertToTitle(701));
-        SwordToOffer s= new SwordToOffer();
-        TreeNode root = new TreeNode(0);
-        TreeNode a = new TreeNode(2);
-        TreeNode b = new TreeNode(4);
-        TreeNode c = new TreeNode(1);
-        TreeNode d = new TreeNode(3);
-        TreeNode e = new TreeNode(-1);
-        TreeNode f = new TreeNode(5);
-        TreeNode g = new TreeNode(1);
-        TreeNode h = new TreeNode(6);
-        TreeNode m = new TreeNode(8);
-        root.left=a;root.right=b;
-        a.left=c;
-        b.left =d; b.right=e;
-        c.left=f; c.right=g;
-        d.right=h;
-        e.right = m;
+        ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
-        int[] t =new int[]{1,2,3,2,2,2,5,4,2};
-        System.out.println(s.firstUniqChar("abaccdeff"));
+        MyContainer<String> myContainer =new MyContainer<>();
+        //
+        for(int i=0;i<10;i++){
+            new Thread(()->{
+                for(int j=0;j<10;j++){
+                    System.out.println(myContainer.get());
+                }
+            },"cus"+i).start();
+        }
+        for(int i=0;i<2;i++){
+            new Thread(()->{
+                for(int j=0;j<50;j++){
+                    myContainer.put(Thread.currentThread().getName()+":"+j);
+                }
+            },"pro"+i).start();
+        }
+    }
+
+    static class MyContainer<T>{
+        final private LinkedList<T> list =new LinkedList<>();
+        final private Integer MAX = 10;
+        private Integer count = 0;
+        private Lock lock = new ReentrantLock();
+        private Condition pro = lock.newCondition();
+        private Condition cus = lock.newCondition();
+
+        public void put(T t){
+            try {
+                lock.lock();
+                while(list.size()==MAX){
+                    try {
+                        pro.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                list.add(t);
+                ++count;
+                cus.signalAll();
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
+            }
+        }
+
+        public T get(){
+            T t =null;
+            try {
+                lock.lock();
+                while (list.size()==0){
+                    cus.await();
+                }
+                t = list.removeFirst();
+                --count;
+                pro.signalAll();
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                lock.unlock();
+            }
+            return t;
+        }
     }
 }

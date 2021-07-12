@@ -1634,6 +1634,178 @@ int mod = (int)1e9+7;
         return ans;
     }
 
+
+    /**
+     * 726. 原子的数量
+     * 给定一个化学式formula（作为字符串），返回每种原子的数量。
+     * 原子总是以一个大写字母开始，接着跟随0个或任意个小写字母，表示原子的名字。
+     * 如果数量大于 1，原子后会跟着数字表示原子的数量。如果数量等于 1 则不会跟数字。例如，H2O 和 H2O2 是可行的，但 H1O2 这个表达是不可行的。
+     * 两个化学式连在一起是新的化学式。例如 H2O2He3Mg4 也是化学式。
+     * 一个括号中的化学式和数字（可选择性添加）也是化学式。例如 (H2O2) 和 (H2O2)3 是化学式。
+     */
+
+
+    public String countOfAtoms(String formula) {
+            return "123";
+    }
+
+    /**
+     * 1418. 点菜展示表
+     * 给你一个数组 orders，表示客户在餐厅中完成的订单，确切地说， orders[i]=[customerNamei,tableNumberi,foodItemi] ，
+     * 其中 customerNamei 是客户的姓名，tableNumberi 是客户所在餐桌的桌号，而 foodItemi 是客户点的餐品名称。
+     * 请你返回该餐厅的 点菜展示表 。在这张表中，表中第一行为标题，其第一列为餐桌桌号 “Table” ，后面每一列都是按字母顺序排列的餐品名称。
+     * 接下来每一行中的项则表示每张餐桌订购的相应餐品数量，第一列应当填对应的桌号，后面依次填写下单的餐品数量。
+     */
+    public List<List<String>> displayTable(List<List<String>> orders) {
+        //记录每张桌子所有的食物清单
+        Map<String,Map<String,Integer>> map = new HashMap<>();
+        //记录全部的食物
+        Set<String> foods = new TreeSet<>();
+        //记录全部的桌子
+        Set<Integer> tables = new TreeSet<>();
+        for(int i=0;i<orders.size();i++){
+            List<String> order = orders.get(i);
+            String table = order.get(1);
+            String food = order.get(2);
+            foods.add(food);
+            tables.add(Integer.valueOf(table));
+            if(map.containsKey(table)){
+                Map<String, Integer> tmp = map.get(table);
+                if(tmp.containsKey(food)){
+                   tmp.put(food,tmp.get(food)+1);
+                }else {
+                    tmp.put(food,1);
+                }
+            }else {
+                Map<String, Integer> tmp =new HashMap<>();
+                tmp.put(food,1);
+                map.put(table,tmp);
+            }
+        }
+        List<List<String>> res = new ArrayList<>();
+        List<String> title = new ArrayList<>();
+        title.add("Table");
+        title.addAll(foods);
+        res.add(title);
+        for(Integer t:tables){
+            Map<String, Integer> tmp = map.get(t.toString());
+            List<String> list = groupFood(tmp,foods,t.toString());
+            res.add(list);
+        }
+        return res;
+    }
+
+    private List<String> groupFood(Map<String, Integer> tmp,Set<String> foods,String table){
+        List<String> res = new ArrayList<>();
+        res.add(table);
+        for(String f:foods){
+            if(tmp.containsKey(f)){
+                res.add(tmp.get(f).toString());
+            }else {
+                res.add("0");
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 1711. 大餐计数
+     * 大餐 是指 恰好包含两道不同餐品 的一餐，其美味程度之和等于 2 的幂。
+     * 你可以搭配 任意 两道餐品做一顿大餐。
+     * 给你一个整数数组 deliciousness ，其中 deliciousness[i] 是第 i道餐品的美味程度，返回你可以用数组中的餐品做出的不同 大餐 的数量。
+     * 结果需要对 10^9+ 7 取余。
+     * 注意，只要餐品下标不同，就可以认为是不同的餐品，即便它们的美味程度相同。
+     */
+    public int countPairs(int[] deliciousness) {
+        Long res = 0L;
+        int mod = 1000000007;
+        int n = deliciousness.length;
+        List<Integer> list =new ArrayList<>();
+        int a = 1;
+        list.add(a);
+        for(int i=0;i<21;i++){
+            a*=2;
+            list.add(a);
+        }
+        Map<Integer,Integer> map =new HashMap<>();
+        for(int i=0;i<n;i++){
+            if(map.containsKey(deliciousness[i])){
+                map.put(deliciousness[i],map.get(deliciousness[i])+1);
+            }else {
+                map.put(deliciousness[i],1);
+            }
+        }
+        for(Integer b:map.keySet()){
+            for(Integer c:list){
+                int d = c-b;
+                if(map.containsKey(d)){
+                    if(d==b){
+                        res+=map.get(d)*(map.get(b)-1);
+                    }else {
+                        res+=map.get(d)*map.get(b);
+                    }
+                }
+            }
+        }
+        return (int)(res%mod);
+    }
+
+    /**
+     * 930. 和相同的二元子数组
+     * 给你一个二元数组 nums ，和一个整数 goal ，请你统计并返回有多少个和为 goal 的 非空 子数组。
+     *
+     * 子数组 是数组的一段连续部分。
+     */
+    public int numSubarraysWithSum(int[] nums, int goal) {
+        int n = nums.length;
+        HashMap<Integer,Integer> map = new HashMap<>();
+        int[] sums = new int[n+1];
+        for(int i=1;i<=n;i++){
+            sums[i]=sums[i-1]+nums[i-1];
+        }
+        map.put(0,1);
+        int res = 0;
+        for(int i=0;i<n;i++){
+            int r = sums[i+1];
+            int l = r-goal;
+            res += map.getOrDefault(l,0);
+            map.put(r,map.getOrDefault(r,0)+1);
+        }
+        return res;
+    }
+
+    /**
+     * 面试题 17.10. 主要元素
+     * 数组中占比超过一半的元素称之为主要元素。给你一个 整数 数组，找出其中的主要元素。若没有，返回 -1 。请设计时间复杂度为 O(N) 、空间复杂度为 O(1) 的解决方案。
+     */
+    public int majorityElement(int[] nums) {
+        int count =1;
+        int res = nums[0];
+        for(int i =1;i<nums.length;i++){
+            if(count==0){
+                res = nums[i];
+                count++;
+            }else {
+                if(res==nums[i]){
+                    count++;
+                }else {
+                    count--;
+                }
+            }
+        }
+        int half = 0;
+        for(int i=0;i<nums.length;i++){
+            if(nums[i]==res){
+                half++;
+            }
+        }
+        if(half>nums.length/2){
+            return res;
+        }else {
+            return -1;
+        }
+    }
+
     /**
      * 981. 基于时间的键值存储
      * 创建一个基于时间的键值存储类 TimeMap，它支持下面两个操作：

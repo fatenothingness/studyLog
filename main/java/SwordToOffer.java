@@ -1103,5 +1103,73 @@ public class SwordToOffer {
             return s.charAt(n);
         }
     }
+
+    /**
+     * 剑指 Offer 45. 把数组排成最小的数
+     * 输入一个非负整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。
+     */
+    public String minNumber(int[] nums) {
+        String[] strs = new String[nums.length];
+        for(int i = 0; i < nums.length; i++)
+            strs[i] = String.valueOf(nums[i]);
+        Arrays.sort(strs, (x, y) -> (x + y).compareTo(y + x));
+        StringBuilder res = new StringBuilder();
+        for(String s : strs)
+            res.append(s);
+        return res.toString();
+    }
+
+    /**
+     * 剑指 Offer 46. 把数字翻译成字符串
+     * 给定一个数字，我们按照如下规则把它翻译为字符串：0 翻译成 “a” ，1 翻译成 “b”，……，11 翻译成 “l”，……，25 翻译成 “z”。一个数字可能有多个翻译。请编程实现一个函数，用来计算一个数字有多少种不同的翻译方法。
+     */
+
+    public int translateNum(int num) {
+        String s = String.valueOf(num);
+        int n = s.length();
+        if(num<10){
+            return 1;
+        }
+        int[] dp = new int[n+1];
+        dp[0] = 1;
+        dp[1] = 1;
+        for(int i=2;i<=n;i++){
+            int t = s.charAt(i-2)-'0';
+            int g = s.charAt(i-1)-'0';
+            int sum = t*10+g;
+            if(sum>=10&&sum<=25){
+                dp[i] = dp[i-1]+dp[i-2];
+            }else {
+                dp[i] = dp[i-1];
+            }
+        }
+        return dp[n];
+    }
+
+    /**
+     * 剑指 Offer 47. 礼物的最大价值
+     * 在一个 m*n 的棋盘的每一格都放有一个礼物，每个礼物都有一定的价值（价值大于 0）。
+     * 你可以从棋盘的左上角开始拿格子里的礼物，并每次向右或者向下移动一格、直到到达棋盘的右下角。
+     * 给定一个棋盘及其上面的礼物的价值，请计算你最多能拿到多少价值的礼物？
+     */
+    public int maxValue(int[][] grid) {
+        int n = grid.length;
+        int m = grid[0].length;
+        int[][] dp =new int[n][m];
+        dp[0][0] = grid[0][0];
+        for(int i=1;i<m;i++){
+            dp[0][i] = dp[0][i-1] + grid[0][i];
+        }
+        for(int i=1;i<n;i++){
+            dp[i][0] = dp[i-1][0] + grid[i][0];
+        }
+
+        for(int i=1;i<n;i++){
+            for(int j=1;j<m;j++){
+                dp[i][j] = Math.max(dp[i-1][j],dp[i][j-1]) + grid[i][j];
+            }
+        }
+        return dp[n-1][m-1];
+    }
 }
 

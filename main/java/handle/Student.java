@@ -33,5 +33,16 @@ public class Student implements Person {
     @TestLog
     public void getInfo(Integer num) {
         System.out.println(name+"今年"+num+"岁");
+
+
+    }
+    private Integer test(){
+        return 1;
+    }
+
+    public static class Test123{
+        public  static void sayHi(){
+            System.out.println("123");
+        }
     }
 }
