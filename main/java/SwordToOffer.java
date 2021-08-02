@@ -1171,5 +1171,35 @@ public class SwordToOffer {
         }
         return dp[n-1][m-1];
     }
+
+    /**]
+     * 剑指 Offer 52. 两个链表的第一个公共节点
+     * 输入两个链表，找出它们的第一个公共节点。
+     */
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        ListNode a = headA;
+        ListNode b = headB;
+        while(a!=null&&b!=null){
+            a=a.next;
+            b=b.next;
+        }
+        while(a!=null){
+            a=a.next;
+            headA=headA.next;
+        }
+        while(b!=null){
+            b=b.next;
+            headB=headB.next;
+        }
+        while(headA!=null){
+            if(headA==headB){
+                return headA;
+            }else {
+                headA=headA.next;
+                headB=headB.next;
+            }
+        }
+        return null;
+    }
 }
 
