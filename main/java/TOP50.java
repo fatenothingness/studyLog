@@ -30,6 +30,50 @@ public class TOP50 {
     }
 
     /**
+     * 4. 寻找两个正序数组的中位数
+     * 给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的 中位数 。
+     */
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int len = nums1.length+nums2.length;
+        int mid;
+        boolean flag = false;
+        if(len%2==0){
+            mid = (len/2)+1;
+            flag = true;
+        }else{
+            mid = (len+1)/2;
+        }
+        int[] tmp = new int[mid];
+        int a = 0;
+        int b = 0;
+        int i = 0;
+        while(i<mid&&a<nums1.length&&b<nums2.length){
+            if(nums1[a]<nums2[b]){
+                tmp[i++] = nums1[a++];
+            }else{
+                tmp[i++] = nums2[b++];
+            }
+        }
+        if(i!=mid){
+            if(a!=nums1.length){
+                while(i<mid){
+                    tmp[i++] = nums1[a++];
+                }
+            }else{
+                while(i<mid){
+                    tmp[i++] = nums2[b++];
+                }
+            }
+        }
+        if(flag){
+            return (tmp[mid-1]+tmp[mid-2])/2.0;
+        }
+        else{
+            return tmp[mid-1];
+        }
+    }
+
+    /**
      * 5. 最长回文子串
      * 给你一个字符串 s，找到 s 中最长的回文子串。
      * 方法：动态规划，定义dp数组 boolean[i][j] 为：在i到是否为回文串

@@ -1886,5 +1886,83 @@ int mod = (int)1e9+7;
     }
 
 
+    /**
+     * 有一个字符串，如果同一个字符重复出现3次及以上，则让它消除，给一个字符串，输出消除后的字符串。
+     */
+
+    public String xxl(String s){
+        char[] c = s.toCharArray();
+        int n = c.length;
+        int i=0;
+        Stack<Character> stack =new Stack<>();
+        while(i<n){
+            int tmp=i;
+            if(stack.isEmpty()){
+                stack.push(c[i]);
+            }else {
+                if(stack.peek()==c[tmp]){
+                    while(stack.peek()==c[tmp]){
+                        stack.push(c[tmp++]);
+                    }
+                    if(tmp-i>=2){
+                        int t = tmp;
+                        while(tmp>=i){
+                            stack.pop();
+                            tmp--;
+                        }
+                        i=t-1;
+                    }else if(stack.size()>2){
+                        char a = stack.pop();
+                        char b = stack.pop();
+                        char d = stack.pop();
+                        if(a==b&&b==d){
+
+                        }else {
+                            stack.push(d);
+                            stack.push(b);
+                            stack.push(a);
+                        }
+                    }
+                }else {
+                    stack.push(c[i]);
+                }
+            }
+            i++;
+        }
+        StringBuilder sb = new StringBuilder();
+        while(!stack.isEmpty()){
+            sb.insert(0,stack.pop());
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 面试题 10.02. 变位词组
+     * 编写一种方法，对字符串数组进行排序，将所有变位词组合在一起。变位词是指字母相同，但排列不同的字符串。
+     */
+    public List<List<String>> groupAnagrams(String[] ss) {
+        List<List<String>> ans = new ArrayList<>();
+        Map<String, List<String>> map = new HashMap<>();
+        for (String s : ss) {
+            char[] cs = s.toCharArray();
+            //对字符数组进行排序
+            Arrays.sort(cs);
+            String key = String.valueOf(cs);
+            List<String> list = map.getOrDefault(key, new ArrayList<>());
+            list.add(s);
+            map.put(key, list);
+        }
+        for (String key : map.keySet()) ans.add(map.get(key));
+        return ans;
+    }
+
+    /**
+     * 1838. 最高频元素的频数
+     * 元素的 频数 是该元素在一个数组中出现的次数。
+     *
+     * 给你一个整数数组 nums 和一个整数 k 。在一步操作中，你可以选择 nums 的一个下标，并将该下标对应元素的值增加 1 。
+     *
+     * 执行最多 k 次操作后，返回数组中最高频元素的 最大可能频数 。
+     */
 }
 
