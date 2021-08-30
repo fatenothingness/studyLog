@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class TX50 {
     /**
      * 2. 两数相加
@@ -164,5 +166,57 @@ public class TX50 {
             }
         }
         return s.substring(left,right+1);
+    }
+
+
+    /**
+     * 15. 三数之和
+     * 给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重复的三元组。
+     * 注意：答案中不可以包含重复的三元组。
+     * 思路：暴力方法是 n^3的时间复杂度 需要对 a b c 单独递归
+     * 优化方法为  先对数组进行排序，对a进行遍历，遍历过程中，b 和 c 分别从 a+1 和 最右 开始用双指针进行遍历
+     * 最终把复杂度变为n^2
+     * @param nums
+     * @return
+     */
+    public static List<List<Integer>> threeSum(int[] nums) {
+        Set<ArrayList<Integer>> set=new HashSet();
+        if(nums.length<3){
+            return new ArrayList<>(set);
+        }
+        Arrays.sort(nums);
+        int i = 0;
+        while(i<nums.length-2){
+            int a = i;
+            int b = i+1;
+            int c = nums.length-1;
+            while(b<c){
+                int sum = nums[a]+nums[b]+nums[c];
+                if(sum>0){
+                    c--;
+                }
+                else if(sum<0){
+                    b++;
+                }
+                else{
+                    ArrayList<Integer> tmp = new ArrayList();
+                    tmp.add(nums[a]);
+                    tmp.add(nums[b]);
+                    tmp.add(nums[c]);
+                    set.add(tmp);
+                    b++;
+                    c--;
+                    continue;
+                }
+            }
+            if(nums[i+1]==nums[i]){
+                while(i<nums.length-2&&nums[i+1]==nums[i]){
+                    i++;
+                }
+            }else{
+                i++;
+            }
+        }
+        return new ArrayList<>(set);
     }
 }

@@ -546,4 +546,306 @@ public class JulyTopic {
         }
         return min<t;
     }
+
+    /**
+     * 446. 等差数列划分 II - 子序列
+     * 给你一个整数数组 nums ，返回 nums 中所有 等差子序列 的数目。
+     *
+     * 如果一个序列中 至少有三个元素 ，并且任意两个相邻元素之差相同，则称该序列为等差序列。
+     *
+     * 例如，[1, 3, 5, 7, 9]、[7, 7, 7, 7] 和 [3, -1, -5, -9] 都是等差序列。
+     * 再例如，[1, 1, 2, 5, 7] 不是等差序列。
+     * 数组中的子序列是从数组中删除一些元素（也可能不删除）得到的一个序列。
+     *
+     * 例如，[2,5,10] 是 [1,2,1,2,4,1,5,10] 的一个子序列。
+     * 题目数据保证答案是一个 32-bit 整数。
+     *
+     *
+     */
+    public int numberOfArithmeticSlices2(int[] nums) {
+        int ans = 0;
+        int n = nums.length;
+        Map<Long, Integer>[] f = new Map[n];
+        for (int i = 0; i < n; ++i) {
+            f[i] = new HashMap<Long, Integer>();
+        }
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < i; ++j) {
+                long d = 1L * nums[i] - nums[j];
+                int cnt = f[j].getOrDefault(d, 0);
+                ans += cnt;
+                f[i].put(d, f[i].getOrDefault(d, 0) + cnt + 1);
+            }
+        }
+        return ans;
+    }
+
+    /**
+     * 516. 最长回文子序列
+     * 给你一个字符串 s ，找出其中最长的回文子序列，并返回该序列的长度。
+     * 子序列定义为：不改变剩余字符顺序的情况下，删除某些字符或者不删除任何字符形成的一个序列。
+     * 方法：区间dp
+     * 通常区间 DP 问题都是，常见的基本流程为：
+     * 从小到大枚举区间大小 len
+     * 枚举区间左端点 l，同时根据区间大小 len 和左端点计算出区间右端点 r = l + len - 1
+     * 通过状态转移方程求 f[l][r]的值
+     */
+    public int longestPalindromeSubseq(String s) {
+        int l = s.length();
+        //定义递归数组：dp[i][j]  为 在i-j范围内最长子序列的长度
+        int[][] dp = new int[l][l];
+        //在i-j范围的的最长子序列取决于
+        //1:当i+1 - j-1范围内子序列长度等于回文串长度时 如果 s[i] = s[j] 则 dp[i][j]=dp[i+1][j-1] + 2
+        //2:s[i] != s[j] dp[i][j] 取的是 dp[i+1][j] dp[i][j-1] 中的最大值，因为i与j不相等时，同时添加到回文串两边不会影响回文串的长度，所以只能加左边或者右边的数，然后取其中的最大值
+        for(int i = l-1;i>=0;i--){
+            dp[i][i] = 1;
+            for(int j = i+1;j<l;j++){
+                if(s.charAt(i)==s.charAt(j)){
+                    dp[i][j] = dp[i+1][j-1]+2;
+                }else {
+                    dp[i][j] = Math.max(dp[i+1][j],dp[i][j-1]);
+                }
+            }
+        }
+        return dp[0][l-1];
+    }
+
+    /**
+     * 233. 数字 1 的个数
+     * 给定一个整数 n，计算所有小于等于 n 的非负整数中数字 1 出现的个数。
+     */
+    public int countDigitOne(int n) {
+        int digit = 1, res = 0;
+        int high = n / 10, cur = n % 10, low = 0;
+        while(high != 0 || cur != 0) {
+            if(cur == 0) res += high * digit;
+            else if(cur == 1) res += high * digit + low + 1;
+            else res += (high + 1) * digit;
+            low += cur * digit;
+            cur = high % 10;
+            high /= 10;
+            digit *= 10;
+        }
+        return res;
+    }
+
+    /**
+     * 526. 优美的排列
+     * 假设有从 1 到 N 的 N 个整数，如果从这 N 个数字中成功构造出一个数组，使得数组的第 i 位 (1 <= i <= N) 满足如下两个条件中的一个，我们就称这个数组为一个优美的排列。条件：
+     * 第 i 位的数字能被 i 整除
+     * i 能被第 i 位上的数字整除
+     * 现在给定一个整数 N，请问可以构造多少个优美的排列？
+     */
+    int res = 0;
+    public int countArrangement(int n) {
+        int[] a = new int[n+1];
+        for(int i=1;i<=n;i++){
+            a[i] = i;
+        }
+        process(a,n);
+        return res;
+    }
+
+    private void process(int[] a,int n){
+        if(n==0){
+            res++;
+            return;
+        }
+        for(int i=1;i<a.length;i++){
+            if(a[i]==-1){
+                continue;
+            }
+            int t = a[i];
+            if(isSuitable(a.length-n,a[i])){
+                a[i]=-1;
+                process(a,n-1);
+            }else {
+                continue;
+            }
+            a[i] = t;
+        }
+    }
+
+    private Boolean isSuitable(int a,int b){
+        if(a%b==0||b%a==0){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    /**
+     * 541. 反转字符串 II
+     * 给定一个字符串 s 和一个整数 k，从字符串开头算起，每 2k 个字符反转前 k 个字符。
+     * 如果剩余字符少于 k 个，则将剩余字符全部反转。
+     * 如果剩余字符小于 2k 但大于或等于 k 个，则反转前 k 个字符，其余字符保持原样。
+     */
+    public String reverseStr(String s, int k) {
+        int len = s.length();
+        char[] c = s.toCharArray();
+        int l = 0;
+        while(l<len){
+            if(l+k-1<len){
+                swap(l,l+k-1,c);
+            }else {
+                swap(l,len-1,c);
+            }
+            l+=2*k;
+        }
+        return String.copyValueOf(c);
+    }
+
+    private void swap(int a,int b,char[] s){
+        while(a<b){
+            char t = s[a];
+            s[a++] = s[b];
+            s[b--] = t;
+        }
+    }
+
+
+    /**
+     * 1646. 获取生成数组中的最大值
+     * 给你一个整数 n 。按下述规则生成一个长度为 n + 1 的数组 nums ：
+     *
+     * nums[0] = 0
+     * nums[1] = 1
+     * 当 2 <= 2 * i <= n 时，nums[2 * i] = nums[i]
+     * 当 2 <= 2 * i + 1 <= n 时，nums[2 * i + 1] = nums[i] + nums[i + 1]
+     * 返回生成数组 nums 中的 最大 值。
+     */
+    public int getMaximumGenerated(int n) {
+        if(n<=1){
+            return n;
+        }
+        int[] dp = new int[n+1];
+        dp[0] = 0;
+        dp[1] = 1;
+        int max = 0;
+        for(int i=2;i<=n;i++){
+            if(i%2==0){
+                dp[i] = dp[i/2];
+            }else {
+                dp[i] = dp[(i-1)/2] + dp[(i-1)/2+1];
+            }
+            max = Math.max(max,dp[i]);
+        }
+        return max;
+    }
+
+    /**
+     * 787. K 站中转内最便宜的航班
+     * 有 n 个城市通过一些航班连接。给你一个数组 flights ，其中 flights[i] = [fromi, toi, pricei] ，表示该航班都从城市 fromi 开始，以价格 toi 抵达 pricei。
+     *
+     * 现在给定所有的城市和航班，以及出发城市 src 和目的地 dst，你的任务是找到出一条最多经过 k 站中转的路线，使得从 src 到 dst 的 价格最便宜 ，并返回该价格。 如果不存在这样的路线，则输出 -1。
+     */
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        //建立hash表记录全部的点到点的记录
+        HashMap<Integer,List<int[]>> map = new HashMap<>();
+        for(int i=0;i<flights.length;i++){
+            int[] f = flights[i];
+            List t;
+            if(map.containsKey(f[0])){
+                 t = map.get(f[0]);
+            }else {
+                 t = new ArrayList();
+            }
+            t.add(new int[]{f[1],f[2]});
+            map.put(f[0],t);
+        }
+        //开始广度度优先遍历
+        //先把起始节点加入队列中
+        Queue<int[]> queue = new LinkedList();
+        queue.add(new int[]{src,0});
+        //记录初始点到各个节点的最小花销
+        HashMap<Integer,Integer> cost = new HashMap<>();
+        while(!queue.isEmpty()&&k>=0){
+            k--;
+            int size = queue.size();
+            for(int i=0;i<size;i++){
+                int[] t = queue.poll();
+                int sumPrice = t[1];
+                if(map.containsKey(t[0])){
+                    List<int[]> list = map.get(t[0]);
+                    for(int[] s:list){
+
+                        if(cost.containsKey(s[0])){
+                            //判断节点有经过，如果有经过，判断花销是否有变小，是则更新cost，并把节点入列
+                            if(cost.get(s[0])>sumPrice+s[1]){
+                                queue.add(new int[]{s[0],sumPrice+s[1]});
+                                cost.put(s[0],sumPrice+s[1]);
+                            }
+                        }else {
+                            queue.add(new int[]{s[0],sumPrice+s[1]});
+                            cost.put(s[0],sumPrice+s[1]);
+                        }
+                    }
+                }
+            }
+        }
+        return cost.get(dst)==null?-1:cost.get(dst);
+    }
+
+
+    /**
+     * 797. 所有可能的路径
+     * 给你一个有 n 个节点的 有向无环图（DAG），请你找出所有从节点 0 到节点 n-1 的路径并输出（不要求按特定顺序）
+     *
+     * 二维数组的第 i 个数组中的单元都表示有向图中 i 号节点所能到达的下一些节点，空就是没有下一个结点了。
+     *
+     * 译者注：有向图是有方向的，即规定了 a→b 你就不能从 b→a 。
+     */
+    public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
+        Queue<List<Integer>> queue =new LinkedList<>();
+        List<Integer> list =new ArrayList<>();
+        list.add(0);
+        queue.add(list);
+        List<List<Integer>> res = new ArrayList<>();
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            for(int i=0;i<size;i++){
+                List<Integer> last = queue.poll();
+                int[] a= graph[last.get(last.size()-1)];
+                if(a!=null){
+                    for(int j=0;j<a.length;j++){
+                        List t = new ArrayList<>(last);
+                        t.add(a[j]);
+                        if(a[j]==graph.length-1){
+                            res.add(t);
+                        }else {
+                            queue.add(t);
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 881. 救生艇
+     * 第 i 个人的体重为 people[i]，每艘船可以承载的最大重量为 limit。
+     *
+     * 每艘船最多可同时载两人，但条件是这些人的重量之和最多为 limit。
+     *
+     * 返回载到每一个人所需的最小船数。(保证每个人都能被船载)。
+     *
+     *思路：贪心
+     */
+    public int numRescueBoats(int[] people, int limit) {
+        Arrays.sort(people);
+        int sum = 0;
+        int l = 0;
+        int r = people.length-1;
+        while(l<=r){
+            if(people[l]+people[r]<=limit){
+                sum++;
+                l++;
+                r--;
+            }else {
+                sum++;
+                r--;
+            }
+        }
+        return sum;
+    }
 }
