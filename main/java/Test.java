@@ -19,8 +19,32 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 public class Test {
+    static abstract class Human{
+        public void sayHello(){
+            System.out.println("hello human");
+        }
+    }
+    static class Man extends Human{
+
+        @Override
+        public void sayHello(){
+            System.out.println("hello man");
+        }
+    }
+    static class Woman extends Human{
+        @Override
+        public void sayHello(){
+            System.out.println("hello woman");
+        }
+    }
+
+
 
     public static void main(String args[]) {
-
+        Human man = new Man();
+        Woman woman = new Woman();
+        Test test = new Test();
+        man.sayHello();
+        woman.sayHello();
     }
 }

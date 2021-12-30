@@ -1,3 +1,8 @@
+package Topic;
+
+import util.ListNode;
+import util.TreeNode;
+
 import java.util.*;
 
 public class OneTopicEveryday {
@@ -377,7 +382,7 @@ public class OneTopicEveryday {
         }
         return res;
     }
-    public void dp(TreeNode root,List<Integer> list){
+    public void dp(TreeNode root, List<Integer> list){
         if(root==null){
             return;
         }
@@ -675,7 +680,7 @@ public class OneTopicEveryday {
         }
     }
 
-    public void leafDp(TreeNode root,List<Integer> list){
+    public void leafDp(TreeNode root, List<Integer> list){
         if(root.left==null&&root.right==null){
             list.add(root.val);
             return;

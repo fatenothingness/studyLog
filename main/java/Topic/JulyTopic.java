@@ -1,4 +1,9 @@
+package Topic;
+
+import util.TreeNode;
+
 import java.util.*;
+
 
 public class JulyTopic {
     public static final int mod = (int)1e9+7;
@@ -248,7 +253,7 @@ public class JulyTopic {
      * 返回到目标结点 target 距离为 K 的所有结点的值的列表。 答案可以以任何顺序返回。
      */
     public List<Integer> distanceK(TreeNode root, TreeNode target, int k) {
-        Map<TreeNode,TreeNode> map = new HashMap<>();
+        Map<TreeNode, TreeNode> map = new HashMap<>();
         Set<TreeNode> set =new HashSet<>();
         //dps，用哈希表保存每个节点的父节点信息
         dps863(root,map);
@@ -284,7 +289,7 @@ public class JulyTopic {
         return res;
     }
 
-    private void dps863(TreeNode root,Map<TreeNode,TreeNode> map){
+    private void dps863(TreeNode root, Map<TreeNode, TreeNode> map){
         if(root==null){
             return;
         }
@@ -847,5 +852,24 @@ public class JulyTopic {
             }
         }
         return sum;
+    }
+
+    /**
+     * 1109. 航班预订统计
+     * 这里有 n 个航班，它们分别从 1 到 n 进行编号。
+     *
+     * 有一份航班预订表 bookings ，表中第 i 条预订记录 bookings[i] = [firsti, lasti, seatsi] 意味着在从 firsti 到 lasti （包含 firsti 和 lasti ）的 每个航班 上预订了 seatsi 个座位。
+     *
+     * 请你返回一个长度为 n 的数组 answer，其中 answer[i] 是航班 i 上预订的座位总数。
+     */
+    public int[] corpFlightBookings(int[][] bookings, int n) {
+        int[] res = new int[n];
+        for(int i=0;i<bookings.length;i++){
+            int[] tmp = bookings[i];
+            for(int j=tmp[0];j<=tmp[1];j++){
+                res[j-1]+=tmp[2];
+            }
+        }
+        return res;
     }
 }

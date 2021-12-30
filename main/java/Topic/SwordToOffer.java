@@ -1,4 +1,7 @@
-import org.checkerframework.checker.units.qual.A;
+package Topic;
+
+import util.ListNode;
+import util.TreeNode;
 
 import java.util.*;
 
@@ -280,7 +283,7 @@ public class SwordToOffer {
         return process(0,0,preorder.length-1,preorder,map);
     }
     // 参数含义：root为前序遍历中根节点的位置，left为中序遍历中的左边界，rigth为右边界
-    private TreeNode process(int root, int left, int right,int[] preorder,HashMap<Integer,Integer> map){
+    private TreeNode process(int root, int left, int right, int[] preorder, HashMap<Integer,Integer> map){
         if(left>right){
             return null;
         }
@@ -706,7 +709,7 @@ public class SwordToOffer {
             return process28(root.left,root.right);
         }
     }
-    private boolean process28(TreeNode left,TreeNode right){
+    private boolean process28(TreeNode left, TreeNode right){
         if(left==null&&right==null){
             return true;
         }else if(left!=null&&right!=null&&left.val==right.val){
